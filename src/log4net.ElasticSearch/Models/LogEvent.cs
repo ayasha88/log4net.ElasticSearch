@@ -18,6 +18,8 @@ namespace log4net.ElasticSearch.Models
             properties = new Dictionary<string, string>();
         }
 
+        public string level { get; set; }
+
         public object messageObject { get; set; }
 
         public static IEnumerable<logEvent> CreateMany(IEnumerable<LoggingEvent> loggingEvents)
@@ -27,6 +29,11 @@ namespace log4net.ElasticSearch.Models
 
         static logEvent Create(LoggingEvent loggingEvent)
         {
+            var logEvent = new logEvent
+            {
+                level = loggingEvent.Level == null ? null : loggingEvent.Level.DisplayName
+            };
+            
             // Added special handling of the MessageObject since it may be an exception. 
             // Exception Types require specialized serialization to prevent serialization exceptions.
             if (loggingEvent.MessageObject != null && loggingEvent.MessageObject.GetType() != typeof(string))
